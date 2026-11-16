@@ -7,7 +7,7 @@ extractor = URLExtract()
 
 def fetch_stact(selected_user, df):
     if selected_user != 'Overall':
-        df = df[df['user'] == selected_user
+        df = df[df['user'] == selected_user]
 
     num_messages = df.shape[0]
 
