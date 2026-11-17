@@ -1,6 +1,7 @@
 from urlextract import URLExtract
 import pandas as pd
 from collections import Counter
+import matplotlib.pyplot as plt
 
 extractor = URLExtract()
 
@@ -50,3 +51,32 @@ def most_common_words(selected_user, df):
 
     most_common_df = pd.DataFrame(Counter(words).most_common(20))
     return most_common_df
+
+
+def plot_common_words(common_df):
+    common_df = common_df.rename(columns={0: 'word', 1: 'count'})
+
+    # chat formatting tokens and words from "This message was deleted" lines
+    drop = {'-', '–', 'omitted>', '<sticker', 'deleted', 'message'}
+    common_df = common_df[~common_df['word'].isin(drop)]
+    common_df = common_df.sort_values('count', ascending=False)
+
+    fig, ax = plt.subplots(figsize=(12, 6))
+    bars = ax.bar(common_df['word'], common_df['count'], color='#e53935')
+    ax.bar_label(bars, padding=3)
+    ax.set_title('Most Common Words in Chat', fontsize=14)
+    ax.set_xlabel('Word')
+    ax.set_ylabel('Frequency')
+    plt.xticks(rotation=45, ha='right')
+    ax.spines[['top', 'right']].set_visible(False)
+    plt.tight_layout()
+    plt.show()
+
+
+# ---- usage ----
+# df must already have 'user' and 'message' columns from your chat-parsing code
+selected_user = 'Overall'
+df = ...  # replace with your preprocessed DataFrame
+
+common_df = most_common_words(selected_user, df)
+plot_common_words(common_df)
